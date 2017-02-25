@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import math
-import sys
-first_arg = int(sys.argv[1])+1
-second_arg = int(sys.argv[2])+1
-third_arg = int(sys.argv[3])+1
-fourth_arg = int(sys.argv[4])+1
+import pandas as pd
 
-def calc_ab(alpha_a=first_arg, beta_a=second_arg, alpha_b=third_arg, beta_b=fourth_arg):
+def calc_ab(alpha_a, beta_a, alpha_b, beta_b):
     # see evanmiller.org/bayesian-ab-testing.html
     # αA number of successes for A
     # βA number of failures for A
@@ -21,5 +17,10 @@ def calc_ab(alpha_a=first_arg, beta_a=second_arg, alpha_b=third_arg, beta_b=four
         total += math.exp(num - den)
     return total
 
-if __name__ == "__main__":
-    print calc_ab()
+df = pd.read_csv('test_AB_data.csv')
+df['p'] = 0.0
+df['p'] = df.apply(lambda x: calc_ab(x['success_false']+1,x['fail_false']+1,x['success_true']+1,x['fail_true']+1), axis=1)
+
+print df
+
+df.to_csv('test2.csv')
